@@ -1,10 +1,10 @@
 <template>
     <div>
         <h1>
-           Welcome {{ user }}
+           <!-- Welcome {{ user }} -->
         </h1>
-        <AddPosts :userId="userId"/>
-        <Posts :idUser="userId"/>
+         <AddPosts/> 
+        <Posts/>
         
     </div>
 </template>
@@ -18,10 +18,6 @@ export default {
     components: {
         AddPosts,
         Posts
-    },
-    props:{
-        user: String,
-        userId: Number,
     },
 
     

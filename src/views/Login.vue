@@ -1,87 +1,69 @@
 <template>
   <div id="login">
     <div class="cantainer">
-      <form>
-        <div class="log">
-          <label class="login">LOGIN</label><br>
-        </div>
+      <form @submit.prevent="login()">
+        <div class="log"><label class="login">LOGIN</label><br /></div>
         <div class="user">
           <label class="username">Username:</label>
         </div>
         <div class="input">
-          <input type="text" v-model="username">
+          <input type="text" v-model="model.username" />
         </div>
         <div class="user">
           <label class="username">Password:</label>
         </div>
         <div class="input">
-          <input type="password" v-model="password">
+          <input type="password" v-model="model.password" />
+        </div>
+        <div v-if="errorLogin" class="error">
+          Pogrešno korisničko ime ili lozinka
         </div>
         <div class="btn">
-          <button @click="login()">Login</button>
+          <button>Login</button>
         </div>
       </form>
     </div>
   </div>
-  
 </template>
 
 <script>
-import {mapGetters, mapActions} from 'vuex';
+import {mapActions} from "vuex";
 
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
-      return{
-        username:"",
-        password:"",
-      }
-     
-  },
-  components: {
+    return {
+      model: {
+        username: "",
+        password: "",
+      },
 
- 
+      errorLogin: false,
+    };
   },
+  components: {},
   methods: {
-      ...mapActions(['fetchUsers']),
-      login()
-      {
-          if(this.username!="" && this.password!="")
-          {
-              /*if(this.username==this.$parent.Account.username && this.$parent.Account.password)
-              {
-                  this.$emit("authenticated",true);
-                  this.$router.replace({name: "home"})
-              }
-              else{
-                  console.log("The username and/or password is incorrect");
-              }*/
+    ...mapActions(["loginUser"]),
+    async login() {
+      if (this.model.username != "" && this.model.password != "") {
+        try {
+          const response = await this.loginUser(this.model);
 
-              /*for(var i=0;i<this.allUsers.length;i++)
-              {
-                  if(this.username==this.allUsers[i].username && this.password==this.allUsers[i].website)
-                  {
-                    
-                      console.log(this.allUsers[i].username, this.allUsers[i].website);
-                      this.$emit("authenticated",true);
-                      this.$router.replace({name: "home",params: {user: this.username }}).catch(()=>{})
-                      i+=this.allUsers.length;
-                      
-                  }
-                  else if(i==this.allUsers.length-1){
-                        console.log("The username and/or password is incorrect");
-                  }
-              }*/
+          localStorage.setItem("token", "Bearer " + response.data.data);
+          this.$router.replace({name: "home"}).catch(()=>{})
+        } catch (error) {
+          this.errorLogin = true;
+        }
 
-              const result = this.allUsers.find(({username}) => username===this.username);
+        /*const result = this.allUsers.find(({username}) => username===this.username);
 
               if(result)
               {
-                if(result.website==this.password)
+                if(result.password==this.password)
                 {
                   this.$emit("authenticated",true);
                   console.log('result', result);
-                  this.$router.replace({name: "home",params: {user: result.name, userId: result.id }}).catch(()=>{})
+                  this.$router.replace({name: "home",params: {/*user: result.name, userId: result.id }}).catch(()=>{})
                 }
                 else
                 {
@@ -91,71 +73,80 @@ export default {
               else
                 {
                   console.log("The username is incorrect");
-                }
-          }
-          else{
-              console.log("The username and password must be present");
-          }
+                }*/
+      } else {
+        console.log("The username and password must be present");
       }
+    },
   },
-  computed: mapGetters(['allUsers']),
-  created() {
-      this.fetchUsers()
-  }
-}
+  watch: {
+    model: {
+      deep: true,
+      handler() {
+        this.errorLogin = false;
+      },
+    },
+  },
+};
 </script>
 
 <style>
-body
-{
-  background:lightskyblue;
+body {
+  background: lightskyblue;
   align-content: center;
 }
-.cantainer
-{
+.cantainer {
   margin-top: 80px;
   margin-left: 30%;
   margin-right: 30%;
   padding: 25px;
   background: white;
 }
-.login{
-  color:rgb(80, 104, 238);
+.login {
+  color: rgb(80, 104, 238);
   font-weight: bold;
   font-size: 1.5em;
 }
-.username{
+.username {
   color: darkgray;
 }
-.log{
+.log {
   margin-bottom: 40px;
   display: flex;
 }
-.user{
+.user {
   margin-bottom: 10px;
   display: flex;
 }
-.input{
+.input {
   display: flex;
   margin-bottom: 20px;
   height: 40px;
 }
-input{
+input {
   width: 100%;
-  background-color:silver;
+  background-color: silver;
   border-color: transparent;
 }
-.btn{
+.btn {
   margin-top: 40px;
   height: 40px;
   display: flex;
 }
-button{
-  background-color:rgb(80, 104, 238);
+button {
+  background-color: rgb(80, 104, 238);
   border-color: transparent;
   width: 100%;
   color: white;
   font-weight: bold;
   font-size: 1em;
+}
+.error {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  color: red;
+  background: white;
 }
 </style>

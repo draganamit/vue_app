@@ -3,8 +3,7 @@
       <h3 style="margin-left:80px">Add Post</h3>
       <div class="add">
              <div class="addPost">
-                 <input type="text" placeholder="AddTitle" v-model="model.title" class="inputAdd">
-                 <input type="text" placeholder="AddPost" v-model="model.body" class="inputAdd">
+                 <input type="text" placeholder="AddPost" v-model="model.text" class="inputAdd">
              </div>
             <button class="btnAdd" @click="addPost(model)">Add</button>
         </div>
@@ -19,15 +18,11 @@ export default {
     data(){
         return {
             model:{
-                title:'',
-                body:'',
-                userId:this.userId
+                text:'',   
             }  
         }
     },
-    props:{
-        userId:Number
-    },
+    
     methods: {
         ...mapActions(['addPost']),
     },

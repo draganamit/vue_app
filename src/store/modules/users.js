@@ -1,5 +1,13 @@
 import axios from "axios";
 
+const token = localStorage.getItem("token");
+const authAxios  = axios.create({
+    baseURL: 'http://localhost:5000/',
+    timeout: 1000,
+    headers:{
+        Authorization: token
+    }
+  });
 const state= {
     users: [],
     posts:[]
@@ -12,25 +20,29 @@ const getters= {
 
 const actions= {
     async fetchUsers({commit}) {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/users');
+        const response = await authAxios.get('posts/getall');
 
         commit('setUsers', response.data);
     },
     async fetchPosts({commit}) {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-
-        commit('setPosts', response.data);
+        const response = await authAxios.get('posts/getall');
+        console.log(response);
+        commit('setPosts', response.data.data);
     },
     async addPost({commit},model){
-        const response=await axios.post('https://jsonplaceholder.typicode.com/posts',model);
+        const response = await authAxios.post('posts',model);
 
-        commit('newPost', response.data);
+        commit('setPosts', response.data.data);
     },
     async deletePost({commit},postId)
     {
-        await axios.delete(`https://jsonplaceholder.typicode.com/posts/${postId}`);
+        const response = await authAxios.delete(`posts/${postId}`);
 
-        commit('removePost', postId);
+        commit('setPosts', response.data.data);
+    },
+    async loginUser(_,model){
+        const response = await axios.post('http://localhost:5000/auth/login', model);
+        return response;
     }
 }
 

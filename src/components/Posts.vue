@@ -1,12 +1,16 @@
 <template>
 <div>
     <h3 style="margin-left:80px"> Your Posts:</h3>
+    <div v-if="allPosts.length">
+
   <div class="posts" v-for="(post,key) in allPosts" :key="key">
-      <div class="post">{{ post.body}}</div>
+      <div class="post">{{ post.text}}</div>
       <div >
          <div class="delete" @click="deletePost(post.id)">X</div>
       </div>
   </div>
+    </div>
+
   </div>
 </template>
 
@@ -15,9 +19,7 @@ import {mapGetters, mapActions, mapMutations} from 'vuex';
 export default {
     name:'Posts',
 
-    props: {
-        idUser: Number
-    },
+    
     methods:{
         ...mapActions(['fetchPosts', 'deletePost']),
         ...mapMutations(['setUserPosts']),
@@ -25,7 +27,7 @@ export default {
     computed: mapGetters(['allPosts']),
     async created(){
         await this.fetchPosts();
-        this.setUserPosts(this.idUser);
+        //this.setUserPosts(this.idUser);
     },
     updated(){
         console.log('updated')
