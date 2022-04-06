@@ -21,9 +21,53 @@
         <div class="btn">
           <button>Login</button>
         </div>
+          Not registred? <a @click="registration()">Create an account</a>
       </form>
+      </div>
+        <div class="register" v-if="register">
+          <form @submit.prevent="reg()">
+            <div class="cls">
+              <div class="empty"></div>
+              <div class="close" @click="close()">X</div>
+            </div>
+            <div class="log"><label class="login">Registration</label><br /></div>
+        <div class="user">
+          <label class="username">Username:</label>
+        </div>
+        <div class="input">
+          <input type="text" v-model="model.username"/>
+        </div>
+        <div v-if="errorRegister" class="errorReg">
+          Polje mora biti popunjeno!
+        </div>
+        <div class="user">
+          <label class="username">Password:</label>
+        </div>
+        <div class="input">
+          <input type="password" v-model="model.password"/>
+        </div>
+        <div v-if="errorRegister" class="errorReg">
+          Polje mora biti popunjeno!
+        </div>
+        <div class="user">
+          <label class="username">Confirm Password:</label>
+        </div>
+        <div class="input">
+          <input type="password" v-model="confirmPassword"/>
+        </div>
+        <div v-if="errorRegister" class="errorReg">
+          Polje mora biti popunjeno!
+        </div>
+        <div v-if="errorConfirm" class="errorReg">
+          Password i ConfirmPassword nisu jednaki!
+        </div>
+        <div class="btn">
+          <button>Register</button>
+        </div>
+          </form>
+        </div>
     </div>
-  </div>
+
 </template>
 
 <script>
@@ -37,13 +81,16 @@ export default {
         username: "",
         password: "",
       },
-
+      confirmPassword: "",
       errorLogin: false,
+      register: false,
+      errorRegister: false,
+      errorConfirm: false
     };
   },
   components: {},
   methods: {
-    ...mapActions(["loginUser"]),
+    ...mapActions(["loginUser", "registerUser"]),
     async login() {
       if (this.model.username != "" && this.model.password != "") {
         try {
@@ -54,38 +101,55 @@ export default {
         } catch (error) {
           this.errorLogin = true;
         }
-
-        /*const result = this.allUsers.find(({username}) => username===this.username);
-
-              if(result)
-              {
-                if(result.password==this.password)
-                {
-                  this.$emit("authenticated",true);
-                  console.log('result', result);
-                  this.$router.replace({name: "home",params: {/*user: result.name, userId: result.id }}).catch(()=>{})
-                }
-                else
-                {
-                  console.log("The password is incorrect");
-                }
-              }
-              else
-                {
-                  console.log("The username is incorrect");
-                }*/
       } else {
         console.log("The username and password must be present");
       }
     },
+    async reg()
+    {
+      if (this.model.username != "" && this.model.password != "" && this.confirmPassword !="") {
+        if(this.model.password==this.confirmPassword)
+        {
+        try { 
+
+          await this.registerUser(this.model);
+          this.register=false;
+        } catch (error) {
+          console.log("error:", error);
+          
+        }
+        }
+        else
+        {
+          this.errorConfirm=true;
+        }
+      } 
+      else {
+        console.log("The username and password must be present");
+        this.errorRegister = true;
+      }
+    },
+    registration()
+    {
+      this.register=true;
+    },
+    close()
+    {
+      this.register=false;
+    }
   },
   watch: {
     model: {
       deep: true,
       handler() {
         this.errorLogin = false;
+        this.errorRegister = false;
       },
     },
+    confirmPassword()
+    {
+      this.errorConfirm = false;
+    }
   },
 };
 </script>
@@ -149,4 +213,45 @@ button {
   color: red;
   background: white;
 }
+.errorReg
+{
+  color: red;
+  background: white;
+  align-content: top;
+  margin-bottom: 20px;
+}
+a{
+      text-decoration: underline;
+      cursor: pointer;
+}
+.register
+{
+  position: absolute;
+  width:50%;
+  top:10%;
+  left:20%;
+  padding: 25px;
+  background: white
+}
+.close
+{
+  color: white;
+  border: 1px solid white;
+  background: red;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  display: flex;
+  flex: 2;
+  cursor: pointer;
+  border-radius: 10%;
+}
+.cls{
+  display: flex;
+}
+.empty
+{
+  flex: 25;
+}
+
 </style>

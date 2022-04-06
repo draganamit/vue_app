@@ -42,6 +42,12 @@ const actions= {
     },
     async loginUser(_,model){
         const response = await axios.post('http://localhost:5000/auth/login', model);
+        
+        return response;
+    },
+    async registerUser(_, model)
+    {
+        const response= await axios.post('http://localhost:5000/auth/register',model);
         return response;
     }
 }
